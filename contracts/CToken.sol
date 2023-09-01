@@ -186,7 +186,7 @@ abstract contract CToken is CTokenInterface, ExponentialNoError, TokenErrorRepor
      * @return The borrow interest rate per block, scaled by 1e18
      */
     function borrowRatePerBlock() override external pure returns (uint) {
-        return 9525507760; // from https://etherscan.io/token/0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5#readContract
+        return 9525507760; // FAKE NUMBER but from ceth: https://etherscan.io/token/0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5#readContract
     }
 
     /**
@@ -194,7 +194,7 @@ abstract contract CToken is CTokenInterface, ExponentialNoError, TokenErrorRepor
      * @return The supply interest rate per block, scaled by 1e18
      */
     function supplyRatePerBlock() override external pure returns (uint) {
-        return 170461185; // from https://etherscan.io/token/0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5#readContract
+        return 170461185; // FAKE NUMBER but from ceth: from https://etherscan.io/token/0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5#readContract
     }
 
     /**
@@ -312,7 +312,7 @@ abstract contract CToken is CTokenInterface, ExponentialNoError, TokenErrorRepor
 
         /* Short-circuit accumulating 0 interest */
         if (accrualBlockNumberPrior == currentBlockNumber) {
-            return NO_ERROR;
+            return 0;
         }
 
         /* Read the previous values out of storage */
@@ -323,7 +323,7 @@ abstract contract CToken is CTokenInterface, ExponentialNoError, TokenErrorRepor
 
         /* Calculate the current borrow interest rate */
         uint borrowRateMantissa = borrowRateMaxMantissa / 2;
-        require(borrowRateMantissa <= borrowRateMaxMantissa, "borrow rate is absurdly high");
+        // require(borrowRateMantissa <= borrowRateMaxMantissa, "borrow rate is absurdly high");
 
         /* Calculate the number of blocks elapsed since the last accrual */
         uint blockDelta = currentBlockNumber - accrualBlockNumberPrior;

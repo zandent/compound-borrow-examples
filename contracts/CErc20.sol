@@ -14,18 +14,23 @@ interface CompLike {
  */
 contract CErc20 is CToken, CErc20Interface {
     /**
-     * @notice Initialize the new money market
+     * @notice constructor the new money market
      * @param underlying_ The address of the underlying asset
      * @param initialExchangeRateMantissa_ The initial exchange rate, scaled by 1e18
      * @param name_ ERC-20 name of this token
      * @param symbol_ ERC-20 symbol of this token
      * @param decimals_ ERC-20 decimal precision of this token
      */
-    function initialize(address underlying_,
-                        uint initialExchangeRateMantissa_,
-                        string memory name_,
-                        string memory symbol_,
-                        uint8 decimals_) public {
+    constructor(
+        address underlying_,
+        uint initialExchangeRateMantissa_,
+        string memory name_,
+        string memory symbol_,
+        uint8 decimals_,
+        address payable admin_) {
+
+        // Set the proper admin now
+        admin = admin_;
         // CToken initialize does the bulk of the work
         super.initialize(initialExchangeRateMantissa_, name_, symbol_, decimals_);
 

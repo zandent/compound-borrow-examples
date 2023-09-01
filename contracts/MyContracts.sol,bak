@@ -139,11 +139,13 @@ contract MyContract {
 
     function borrowEthExample(
         address payable _cEtherAddress,
+        address _comptrollerAddress,
         address _cTokenAddress,
         address _underlyingAddress,
         uint256 _underlyingToSupplyAsCollateral
     ) public returns (uint) {
         CEth cEth = CEth(_cEtherAddress);
+        Comptroller comptroller = Comptroller(_comptrollerAddress);
         CErc20 cToken = CErc20(_cTokenAddress);
         Erc20 underlying = Erc20(_underlyingAddress);
 
@@ -157,19 +159,23 @@ contract MyContract {
         // Enter the market so you can borrow another type of asset
         address[] memory cTokens = new address[](1);
         cTokens[0] = _cTokenAddress;
+        uint256[] memory errors = comptroller.enterMarkets(cTokens);
+        if (errors[0] != 0) {
+            revert("Comptroller.enterMarkets failed.");
+        }
 
-        // // Get my account's total liquidity value in Compound
-        // (uint256 error2, uint256 liquidity, uint256 shortfall) = comptroller
-        //     .getAccountLiquidity(address(this));
-        // if (error2 != 0) {
-        //     revert("Comptroller.getAccountLiquidity failed.");
-        // }
-        // require(shortfall == 0, "account underwater");
-        // require(liquidity > 0, "account has excess collateral");
+        // Get my account's total liquidity value in Compound
+        (uint256 error2, uint256 liquidity, uint256 shortfall) = comptroller
+            .getAccountLiquidity(address(this));
+        if (error2 != 0) {
+            revert("Comptroller.getAccountLiquidity failed.");
+        }
+        require(shortfall == 0, "account underwater");
+        require(liquidity > 0, "account has excess collateral");
 
-        // // Borrowing near the max amount will result
-        // // in your account being liquidated instantly
-        // emit MyLog("Maximum ETH Borrow (borrow far less!)", liquidity);
+        // Borrowing near the max amount will result
+        // in your account being liquidated instantly
+        emit MyLog("Maximum ETH Borrow (borrow far less!)", liquidity);
 
         // // Get the collateral factor for our collateral
         // (
