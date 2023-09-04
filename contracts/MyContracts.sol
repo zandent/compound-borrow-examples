@@ -59,14 +59,10 @@ contract MyContract {
     // Seed the contract with a supported underyling asset before running this
     function borrowErc20Example(
         address payable _cEtherAddress,
-        address _comptrollerAddress,
-        address _priceFeedAddress,
         address _cTokenAddress,
         uint _underlyingDecimals
     ) public payable returns (uint256) {
         CEth cEth = CEth(_cEtherAddress);
-        Comptroller comptroller = Comptroller(_comptrollerAddress);
-        PriceFeed priceFeed = PriceFeed(_priceFeedAddress);
         CErc20 cToken = CErc20(_cTokenAddress);
 
         // Supply ETH as collateral, get cETH in return
@@ -75,19 +71,19 @@ contract MyContract {
         // Enter the ETH market so you can borrow another type of asset
         address[] memory cTokens = new address[](1);
         cTokens[0] = _cEtherAddress;
-        uint256[] memory errors = comptroller.enterMarkets(cTokens);
-        if (errors[0] != 0) {
-            revert("Comptroller.enterMarkets failed.");
-        }
+        // uint256[] memory errors = comptroller.enterMarkets(cTokens);
+        // if (errors[0] != 0) {
+        //     revert("Comptroller.enterMarkets failed.");
+        // }
 
-        // Get my account's total liquidity value in Compound
-        (uint256 error, uint256 liquidity, uint256 shortfall) = comptroller
-            .getAccountLiquidity(address(this));
-        if (error != 0) {
-            revert("Comptroller.getAccountLiquidity failed.");
-        }
-        require(shortfall == 0, "account underwater");
-        require(liquidity > 0, "account has excess collateral");
+        // // Get my account's total liquidity value in Compound
+        // (uint256 error, uint256 liquidity, uint256 shortfall) = comptroller
+        //     .getAccountLiquidity(address(this));
+        // if (error != 0) {
+        //     revert("Comptroller.getAccountLiquidity failed.");
+        // }
+        // require(shortfall == 0, "account underwater");
+        // require(liquidity > 0, "account has excess collateral");
 
         // Get the collateral factor for our collateral
         // (
@@ -100,14 +96,14 @@ contract MyContract {
         // uint borrowRateMantissa = cToken.borrowRatePerBlock();
         // emit MyLog('Current Borrow Rate', borrowRateMantissa);
 
-        // Get the underlying price in USD from the Price Feed,
-        // so we can find out the maximum amount of underlying we can borrow.
-        uint256 underlyingPrice = priceFeed.getUnderlyingPrice(_cTokenAddress);
-        uint256 maxBorrowUnderlying = liquidity / underlyingPrice;
+        // // Get the underlying price in USD from the Price Feed,
+        // // so we can find out the maximum amount of underlying we can borrow.
+        // uint256 underlyingPrice = priceFeed.getUnderlyingPrice(_cTokenAddress);
+        // uint256 maxBorrowUnderlying = liquidity / underlyingPrice;
 
-        // Borrowing near the max amount will result
-        // in your account being liquidated instantly
-        emit MyLog("Maximum underlying Borrow (borrow far less!)", maxBorrowUnderlying);
+        // // Borrowing near the max amount will result
+        // // in your account being liquidated instantly
+        // emit MyLog("Maximum underlying Borrow (borrow far less!)", maxBorrowUnderlying);
 
         // Borrow underlying
         uint256 numUnderlyingToBorrow = 10;
